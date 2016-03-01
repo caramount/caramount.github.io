@@ -145,8 +145,8 @@
    float texture(vec3 p) {
       //float t = -.5 + turbulence(p + vec3(uTime * .1, 0., 0.));
       float t = fractal(p);
-      return .1 * min(0., t + .1);
-      //return .03 * max(0., sin(10. * p.x + 10. * t));
+      //return .1 * min(0., t + .1);
+      return .06 * max(0., sin(10. * p.x + 10. * t));
    }
 
    // SOLID MARBLING TEXTURE FOR COLOR VARIATION
@@ -182,25 +182,37 @@
 
       // MODULATE AMBIENT COLOR BY SOLID MARBLING TEXTURE.
 
-      vec3 shade = ambient * mix(vec3(1.,0.,0.), vec3(0.,0.,1.), texture2(p));
+      vec3 shade = ambient * mix(vec3(0.,0.,2.), vec3(1.,1.5,0.), texture2(p));
 
       // LOOP THROUGH THE FIRST uNlights LIGHT SOURCES.
       for (int i = 0 ; i < 2 ; i++)
          if (i < uNLights) {
-            bool hit = false;
+            bool shadowHit = false;
+            bool reflectHit = false;
             vec3 R = 2. * dot(normal, uLDir[i]) * normal - uLDir[i];
             for (int j = 0; j < 2; j++){
                //if not working change epsilon?? (.01)
                if (spheres[j] != sphere){
                   float shadowT = raySphere(point + .001, uLDir[1], spheres[j]);
                   if (shadowT < 10000. && sphere != spheres[1]){
-                     hit = true;
+                     shadowHit = true;
+                  }
+                  vec3 reflect = normal*2.*dot(normal, -W) - -W;
+                  float reflectT = raySphere(point + .001, reflect, spheres[j]);
+                  if (reflectT < 10000.){ //&& sphere != spheres[1]){
+                     reflectHit = true;
                   }
                }
             }
-            if (!hit){
+            if (!shadowHit){
                 shade += lColor[i] * (diffuse * max(0., dot(normal, uLDir[i])) +
                                       shininess * pow(max(0., dot(-W, R)), power));
+            }
+            if (reflectHit){
+               if (!(sphere == spheres[0] && uLDir[i] == uLDir[0])){
+                  shade += lColor[i] * (diffuse * max(0., dot(normal, uLDir[i])) +
+                                      shininess * pow(max(0., dot(-W, R)), power));
+               }
             }
          }
       return shade;

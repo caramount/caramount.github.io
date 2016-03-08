@@ -1,0 +1,111 @@
+<center>
+<h1>Presenting: Virtual Pup</h1>
+</center>
+<center>
+<canvas id=canvas1 width=600 height=400></canvas>
+<p>
+<i>Online interactions not rated by the ESRB.</i>
+</center>
+<p>
+</center>
+<p>
+
+<script src=drawlib1.js></script>
+
+<!! BELOW IS THE CONTENT WE DEVELOPED IN TUESDAY'S CLASS.>
+
+<script>
+   var canvas;
+
+   canvas = initCanvas('canvas1');
+
+   canvas.update = function(g) {
+      var x = this.cursor.x,
+          y = this.cursor.y;
+
+      g.strokeStyle = 'black';
+      g.strokeRect(1, 1, this.width-2, this.height-2);
+
+
+      //Left ear
+      g.beginPath();
+      g.moveTo(250,70);
+      g.quadraticCurveTo(180,70,220 + 10 * .5 * Math.sin(time * 5),200);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      //Right ear
+      g.beginPath();
+      g.moveTo(350,70);
+      g.quadraticCurveTo(420,70,370 + 10 * .5 * Math.cos(time * 5),200);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      var eyeMovex = Math.sin(time)*5;
+      var eyeMovey = Math.cos(time)*Math.cos(time);
+
+      //Left eye
+      g.beginPath();
+      g.arc(280,90,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(280+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+
+      //Right eye
+      g.beginPath();
+      g.arc(320,90,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(320+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+
+
+      //Mouth
+      g.beginPath();
+      g.arc(286,130,14,0,1*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(314,130,14,0,1*Math.PI);
+      g.stroke();
+
+      //Tongue
+      g.beginPath();
+      g.moveTo(290,144);
+      g.bezierCurveTo(290,164,310,164,310,144);
+      g.fillStyle = "#FF99CC";
+      g.fill();
+
+      //Left freckles
+      g.beginPath();
+      g.arc(280,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+      g.beginPath();
+      g.arc(285,135,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(290,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill(); 
+
+      //Right freckles
+      g.beginPath();
+      g.arc(310,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+      g.beginPath();
+      g.arc(315,135,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(320,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill(); 
+   }
+
+</script>
+

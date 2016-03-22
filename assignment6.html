@@ -1,0 +1,160 @@
+
+<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
+<big>HTML5 Canvas Reference is here</big></a></b>
+
+<!! THIS IS AN EXAMPLE OF A HOMEWORK DOCUMENT THAT CONTAINS CANVAS BASED GRAPHICS.
+    YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
+
+<p>
+Here is my puppy from the previous assignment, no longer static thanks to matrices:
+<p>
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=600 height=400> </canvas>
+<p>
+
+<i>Puppies love to play fetch.</i>
+
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+<script src=utility.js></script>
+<script src=drawlib1.js></script>
+<script src=matrix.js></script>
+
+<script>
+   var canvas;
+
+
+   // BELOW IS THE CODE WE WROTE ON THURSDAY TO TEST THE MATRIX CLASS.
+   // YOU NEED TO FINISH IMPLEMENTING THE MATRIX CLASS, AND THEN
+   // CREATE AN ANIMATED GRAPHICAL SCENE TO DEMONSTRATE YOUR WORK.
+   // YOU SHOULD USE BOTH THE time AND this.cursor VARIABLES.
+
+   var matrix = new Matrix();
+
+   matrix.identity();
+   matrix.translate(1, 0, 0);
+   matrix.translate(2, 3, 0);
+
+
+   console.log(matrix.toString());
+
+   var srcVec = new Vector3(10, 0, 0);
+   var dstVec = new Vector3(0, 0, 0);
+   matrix.transform(srcVec, dstVec);
+
+   console.log(dstVec.toString());
+   
+   /////////////////////////////////////////////////////////////////////
+
+
+   canvas = initCanvas('canvas1');
+   canvas.update = function(g) {
+
+      // YOU ARE GOING TO REPLACE THE CODE BELOW.
+
+      var x = this.cursor.x,
+          y = this.cursor.y;
+
+      //This matrix represents our dog
+      var matrix = new Matrix();
+      var begin = new Vector3(250,70,0);
+      var end = new Vector3(280,70,0);
+      matrix.transform(begin,end);
+
+      var gpuMatrix = [];
+      matrix.toGPUMatrix(gpuMatrix);
+      //console.log(matrix[0][0]);
+
+      //Left ear
+      g.beginPath();
+      g.moveTo(begin.x,begin.y);
+      g.quadraticCurveTo(180,70,220 + 10 * .5 * Math.sin(time * 5),200);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      m
+
+      //Right ear
+      g.beginPath();
+      g.moveTo(350,70);
+      g.quadraticCurveTo(420,70,370 + 10 * .5 * Math.cos(time * 5),200);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      var eyeMovex = Math.sin(time)*5;
+      var eyeMovey = Math.cos(time)*Math.cos(time);
+
+      //Left eye
+      g.beginPath();
+      g.arc(280,90,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(280+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+
+      //Right eye
+      g.beginPath();
+      g.arc(320,90,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(320+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+
+
+      //Mouth
+      g.beginPath();
+      g.arc(286,130,14,0,1*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(314,130,14,0,1*Math.PI);
+      g.stroke();
+
+      //Tongue
+      g.beginPath();
+      g.moveTo(290,144);
+      g.bezierCurveTo(290,164,310,164,310,144);
+      g.fillStyle = "#FF99CC";
+      g.fill();
+
+      //Left freckles
+      g.beginPath();
+      g.arc(280,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+      g.beginPath();
+      g.arc(285,135,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(290,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill(); 
+
+      //Right freckles
+      g.beginPath();
+      g.arc(310,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+      g.beginPath();
+      g.arc(315,135,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(320,130,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill(); 
+   }
+</script>

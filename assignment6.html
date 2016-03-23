@@ -6,7 +6,7 @@
     YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
 
 <p>
-Here is my puppy from the previous assignment, no longer static thanks to matrices:
+Here is my square, made to look 3D thanks to my matrix class:
 <p>
 
 <center>
@@ -17,7 +17,7 @@ Here is my puppy from the previous assignment, no longer static thanks to matric
 <canvas id=canvas1 width=600 height=400> </canvas>
 <p>
 
-<i>Puppies love to play fetch.</i>
+<i>Mesmerizing, right?</i>
 
 </center>
 </td>
@@ -27,7 +27,6 @@ Here is my puppy from the previous assignment, no longer static thanks to matric
 </center>
 <p>
 
-<script src=utility.js></script>
 <script src=drawlib1.js></script>
 <script src=matrix.js></script>
 
@@ -47,13 +46,13 @@ Here is my puppy from the previous assignment, no longer static thanks to matric
    matrix.translate(2, 3, 0);
 
 
-   console.log(matrix.toString());
+   //console.log(matrix.toString());
 
    var srcVec = new Vector3(10, 0, 0);
    var dstVec = new Vector3(0, 0, 0);
    matrix.transform(srcVec, dstVec);
 
-   console.log(dstVec.toString());
+   //console.log(dstVec.toString());
    
    /////////////////////////////////////////////////////////////////////
 
@@ -66,95 +65,66 @@ Here is my puppy from the previous assignment, no longer static thanks to matric
       var x = this.cursor.x,
           y = this.cursor.y;
 
+      g.strokeStyle = 'black';
+      g.strokeRect(1, 1, this.width-2, this.height-2);
+
       //This matrix represents our dog
       var matrix = new Matrix();
-      var begin = new Vector3(250,70,0);
-      var end = new Vector3(280,70,0);
-      matrix.transform(begin,end);
 
-      var gpuMatrix = [];
-      matrix.toGPUMatrix(gpuMatrix);
-      //console.log(matrix[0][0]);
+      matrix.identity();
+      matrix.translate(Math.sin(time)/2,0,0);
+      matrix.rotateX(Math.cos(time));
+      matrix.rotateZ(time);
 
-      //Left ear
+      //console.log(matrix.toString());
+
+      var bl = new Vector3(-.3,-.3,0);
+      var br = new Vector3(.3,-.3,0);
+      var tl = new Vector3(-.3,.3,0);
+      var tr = new Vector3(.3,.3,0);
+      var tmp = new Vector3(0,0,0);
+
+      var px0 = new Vector3(0,0,0);
+      var px1 = new Vector3(0,0,0);
+      var px2 = new Vector3(0,0,0);
+      var px3 = new Vector3(0,0,0);
+
+
+      matrix.transform(bl,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,px0);
+
+      console.log("px0: ",px0.x,px0.y);
       g.beginPath();
-      g.moveTo(begin.x,begin.y);
-      g.quadraticCurveTo(180,70,220 + 10 * .5 * Math.sin(time * 5),200);
-      g.fillStyle = "#B27300";
-      g.fill();
+      g.moveTo(px0.x,px0.y);
+
+      matrix.transform(br,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,px1);
+
+      console.log("px1: ",px1.x,px1.y);
+      g.lineTo(px1.x,px1.y);
+      
+      matrix.transform(tr,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,px2);
+
+      console.log("px2: ",px2.x,px2.y);
+      g.lineTo(px2.x,px2.y);
+
+      matrix.transform(tl,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,px3);
+
+      console.log("px3: ",px3.x,px3.y);
+      g.lineTo(px3.x,px3.y);
+
+      g.lineTo(px0.x,px0.y);
+
+      g.lineTo(px2.x,px2.y);
+
+      g.moveTo(px1.x,px1.y);
+
+      g.lineTo(px3.x,px3.y);
+
+      g.stroke();
 
       
-
-      //Right ear
-      g.beginPath();
-      g.moveTo(350,70);
-      g.quadraticCurveTo(420,70,370 + 10 * .5 * Math.cos(time * 5),200);
-      g.fillStyle = "#B27300";
-      g.fill();
-
-      var eyeMovex = Math.sin(time)*5;
-      var eyeMovey = Math.cos(time)*Math.cos(time);
-
-      //Left eye
-      g.beginPath();
-      g.arc(280,90,15,0,2*Math.PI);
-      g.stroke();
-      g.beginPath();
-      g.arc(280+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();
-
-      //Right eye
-      g.beginPath();
-      g.arc(320,90,15,0,2*Math.PI);
-      g.stroke();
-      g.beginPath();
-      g.arc(320+eyeMovex,90+eyeMovey,9,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();
-
-
-      //Mouth
-      g.beginPath();
-      g.arc(286,130,14,0,1*Math.PI);
-      g.stroke();
-      g.beginPath();
-      g.arc(314,130,14,0,1*Math.PI);
-      g.stroke();
-
-      //Tongue
-      g.beginPath();
-      g.moveTo(290,144);
-      g.bezierCurveTo(290,164,310,164,310,144);
-      g.fillStyle = "#FF99CC";
-      g.fill();
-
-      //Left freckles
-      g.beginPath();
-      g.arc(280,130,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();    
-      g.beginPath();
-      g.arc(285,135,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();
-      g.beginPath();
-      g.arc(290,130,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill(); 
-
-      //Right freckles
-      g.beginPath();
-      g.arc(310,130,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();    
-      g.beginPath();
-      g.arc(315,135,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill();
-      g.beginPath();
-      g.arc(320,130,1,0,2*Math.PI);
-      g.fillStyle = "black";
-      g.fill(); 
    }
 </script>

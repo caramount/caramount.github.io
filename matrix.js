@@ -46,7 +46,7 @@ Matrix.prototype = {
       this._multiply(this._tmp1);
    },
 
-   scale : function(x, y, z) {
+   scale : function(src, dst, x, y, z) {
       this._makeScale(this._tmp1, x, y, z);
       this._multiply(this._tmp1);
    },

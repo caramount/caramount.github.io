@@ -6,7 +6,8 @@
     YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
 
 <p>
-Here is my square, made to look 3D thanks to my matrix class:
+Here is my virtual pup, now animated to follow the cursor with the
+help of the Matrix class:
 <p>
 
 <center>
@@ -17,7 +18,7 @@ Here is my square, made to look 3D thanks to my matrix class:
 <canvas id=canvas1 width=600 height=400> </canvas>
 <p>
 
-<i>Mesmerizing, right?</i>
+<i>He's a cutie, right?</i>
 
 </center>
 </td>
@@ -64,6 +65,9 @@ Here is my square, made to look 3D thanks to my matrix class:
 
       var x = this.cursor.x,
           y = this.cursor.y;
+          //Normalize x and y for use with matrix etc
+          normalX = x/600 - 0.5;
+          normalY = y/400 - 0.5;
 
       g.strokeStyle = 'black';
       g.strokeRect(1, 1, this.width-2, this.height-2);
@@ -72,9 +76,11 @@ Here is my square, made to look 3D thanks to my matrix class:
       var matrix = new Matrix();
 
       matrix.identity();
-      matrix.translate(Math.sin(time)/2,0,0);
-      matrix.rotateX(Math.cos(time));
-      matrix.rotateZ(time);
+      //matrix.translate(Math.sin(time)/2,0,0);
+
+      // Rotate matrix to follow cursor
+      matrix.rotateX(normalY*1.5);
+      matrix.rotateY(normalX*1.5);
 
       //console.log(matrix.toString());
 
@@ -89,42 +95,210 @@ Here is my square, made to look 3D thanks to my matrix class:
       var px2 = new Vector3(0,0,0);
       var px3 = new Vector3(0,0,0);
 
+      getPoint(matrix,bl,px0);
+      getPoint(matrix,br,px1);
+      getPoint(matrix,tr,px2);
+      getPoint(matrix,tl,px3);
 
-      matrix.transform(bl,tmp);
-      tmp.viewportTransform(canvas.width,canvas.height,px0);
+      // Grid used to guide drawing
+      // g.beginPath();
+      // g.moveTo(px0.x,px0.y);
+      // g.lineTo(px1.x,px1.y);
+      // g.lineTo(px2.x,px2.y);
+      // g.lineTo(px3.x,px3.y);
+      // g.lineTo(px0.x,px0.y);
+      // g.lineTo(px2.x,px2.y);
+      // g.moveTo(px1.x,px1.y);
+      // g.lineTo(px3.x,px3.y);
+      // g.stroke();
 
-      console.log("px0: ",px0.x,px0.y);
-      g.beginPath();
-      g.moveTo(px0.x,px0.y);
+      //Eyes
+      var el = new Vector3(-.07,.15,0);
+      var er = new Vector3(.07,.15,0);
+      var eyeL = new Vector3(0,0,0);
+      var eyeR = new Vector3(0,0,0);
 
-      matrix.transform(br,tmp);
-      tmp.viewportTransform(canvas.width,canvas.height,px1);
-
-      console.log("px1: ",px1.x,px1.y);
-      g.lineTo(px1.x,px1.y);
+      getPoint(matrix,el,eyeL);
+      getPoint(matrix,er,eyeR);
+      var eyeMoveX = normalX*10, eyeMoveY = normalY*10;
       
-      matrix.transform(tr,tmp);
-      tmp.viewportTransform(canvas.width,canvas.height,px2);
+      //Left eye
+      g.beginPath();
+      g.arc(eyeL.x,eyeL.y,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(eyeL.x+eyeMoveX,eyeL.y+eyeMoveY,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      //Right eye
+      g.beginPath();
+      g.arc(eyeR.x,eyeR.y,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(eyeR.x+eyeMoveX,eyeR.y+eyeMoveY,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
 
-      console.log("px2: ",px2.x,px2.y);
-      g.lineTo(px2.x,px2.y);
+      //Mouth
+      var mLTL = new Vector3(-0.09,0.03,0);
+      var mLTR = new Vector3(0,0.03,0);
+      var mLBL = new Vector3(-0.09,-0.03,0);
+      var mLBR = new Vector3(0,-0.03,0);
 
-      matrix.transform(tl,tmp);
-      tmp.viewportTransform(canvas.width,canvas.height,px3);
+      var mRTL = new Vector3(0,0.03,0);
+      var mRTR = new Vector3(0.09,0.03,0);
+      var mRBL = new Vector3(0,-0.03,0);
+      var mRBR = new Vector3(0.09,-0.03,0);
 
-      console.log("px3: ",px3.x,px3.y);
-      g.lineTo(px3.x,px3.y);
+      var leftMouthTL = new Vector3(0,0,0);
+      var leftMouthTR = new Vector3(0,0,0);
+      var leftMouthBL = new Vector3(0,0,0);
+      var leftMouthBR = new Vector3(0,0,0);
 
-      g.lineTo(px0.x,px0.y);
+      var rightMouthTL = new Vector3(0,0,0);
+      var rightMouthTR = new Vector3(0,0,0);
+      var rightMouthBL = new Vector3(0,0,0);
+      var rightMouthBR = new Vector3(0,0,0);
 
-      g.lineTo(px2.x,px2.y);
+      getPoint(matrix,mLTL,leftMouthTL);
+      getPoint(matrix,mLTR,leftMouthTR);
+      getPoint(matrix,mLBL,leftMouthBL);
+      getPoint(matrix,mLBR,leftMouthBR);
+      getPoint(matrix,mRTL,rightMouthTL);
+      getPoint(matrix,mRTR,rightMouthTR);
+      getPoint(matrix,mRBL,rightMouthBL);
+      getPoint(matrix,mRBR,rightMouthBR);
 
-      g.moveTo(px1.x,px1.y);
-
-      g.lineTo(px3.x,px3.y);
-
+      g.beginPath();
+      g.moveTo(leftMouthTL.x,leftMouthTL.y);
+      g.bezierCurveTo(leftMouthBL.x,leftMouthBL.y,leftMouthBR.x,leftMouthBR.y,
+                        leftMouthTR.x,leftMouthTR.y);
+      g.stroke();
+      g.beginPath();
+      g.moveTo(rightMouthTL.x,rightMouthTL.y);
+      g.bezierCurveTo(rightMouthBL.x,rightMouthBL.y,rightMouthBR.x,rightMouthBR.y,
+                        rightMouthTR.x,rightMouthTR.y);
       g.stroke();
 
+      //Tongue
+      var tTL = new Vector3(-0.04,-0.015,0);
+      var tTR = new Vector3(0.04,-0.015,0);
+      var tBL = new Vector3(-0.04,-0.08,0);
+      var tBR = new Vector3(0.04,-0.08,0);
+
+      var tongueTL = new Vector3(0,0,0);
+      var tongueTR = new Vector3(0,0,0);
+      var tongueBL = new Vector3(0,0,0);
+      var tongueBR = new Vector3(0,0,0);   
+
+      getPoint(matrix,tTL,tongueTL);
+      getPoint(matrix,tTR,tongueTR);
+      getPoint(matrix,tBL,tongueBL);
+      getPoint(matrix,tBR,tongueBR);
+
+      g.beginPath();
+      g.moveTo(tongueTL.x,tongueTL.y);
+      g.bezierCurveTo(tongueBL.x,tongueBL.y,tongueBR.x,tongueBR.y,
+                        tongueTR.x,tongueTR.y);
+      g.fillStyle = "#FF99CC";
+      g.fill();  
+
+      //Left freckles
+      var lF1 = new Vector3(-0.07,0.03,0);
+      var lF2 = new Vector3(-0.02,0.03,0);
+      var lF3 = new Vector3(-0.045,0.01,0);
+
+      var leftFreckle1 = new Vector3(0,0,0);
+      var leftFreckle2 = new Vector3(0,0,0);
+      var leftFreckle3 = new Vector3(0,0,0);
+
+      getPoint(matrix,lF1,leftFreckle1);
+      getPoint(matrix,lF2,leftFreckle2);
+      getPoint(matrix,lF3,leftFreckle3);
+
+      g.beginPath();
+      g.arc(leftFreckle1.x,leftFreckle1.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(leftFreckle2.x,leftFreckle2.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();        
+      g.beginPath();
+      g.arc(leftFreckle3.x,leftFreckle3.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+
+      //Right freckles
+      var rF1 = new Vector3(0.07,0.03,0);
+      var rF2 = new Vector3(0.02,0.03,0);
+      var rF3 = new Vector3(0.045,0.01,0);
+
+      var rightFreckle1 = new Vector3(0,0,0);
+      var rightFreckle2 = new Vector3(0,0,0);
+      var rightFreckle3 = new Vector3(0,0,0);
+
+      getPoint(matrix,rF1,rightFreckle1);
+      getPoint(matrix,rF2,rightFreckle2);
+      getPoint(matrix,rF3,rightFreckle3);
+
+      g.beginPath();
+      g.arc(rightFreckle1.x,rightFreckle1.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(rightFreckle2.x,rightFreckle2.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();        
+      g.beginPath();
+      g.arc(rightFreckle3.x,rightFreckle3.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();  
+
+      //Left ear
+      var lET = new Vector3(-.15,.2,0);
+      var lEL = new Vector3(-.4,.15,0);
+      var lEB = new Vector3(-.2 + (Math.sin(time*4))/20,-.3,0);
+
+      var leftEarT = new Vector3(0,0,0);
+      var leftEarL = new Vector3(0,0,0);
+      var leftEarB = new Vector3(0,0,0);
+
+      getPoint(matrix,lET,leftEarT);
+      getPoint(matrix,lEL,leftEarL);
+      getPoint(matrix,lEB,leftEarB);
+
+      g.beginPath();
+      g.moveTo(leftEarT.x,leftEarT.y);
+      g.quadraticCurveTo(leftEarL.x,leftEarL.y,leftEarB.x,leftEarB.y);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      //Right ear
+      var rET = new Vector3(.15,.2,0);
+      var rER = new Vector3(.4,.15,0);
+      var rEB = new Vector3(.2 + (Math.cos(time*4))/20,-.3,0);
+
+      var rightEarT = new Vector3(0,0,0);
+      var rightEarR = new Vector3(0,0,0);
+      var rightEarB = new Vector3(0,0,0);
+
+      getPoint(matrix,rET,rightEarT);
+      getPoint(matrix,rER,rightEarR);
+      getPoint(matrix,rEB,rightEarB);
+
+      g.beginPath();
+      g.moveTo(rightEarT.x,rightEarT.y);
+      g.quadraticCurveTo(rightEarR.x,rightEarR.y,rightEarB.x,rightEarB.y);
+      g.fillStyle = "#B27300";
+      g.fill();
+
       
+   }
+
+   getPoint = function(matrix,mPoint, dst) {
+      var tmp = new Vector3(0,0,0);
+      matrix.transform(mPoint,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,dst);
    }
 </script>

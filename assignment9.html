@@ -1,0 +1,431 @@
+
+<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
+<big>HTML5 Canvas Reference is here</big></a></b>
+
+<!! THIS IS AN EXAMPLE OF A HOMEWORK DOCUMENT THAT CONTAINS CANVAS BASED GRAPHICS.
+    YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
+
+<p>
+Here is a simple square which is animated using hermite and bezier curves:
+<p>
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=600 height=400> </canvas>
+<p>
+
+<i>Virtual pup flying in with style!</i>
+
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+<script src=drawlib1.js></script>
+<script src=matrix.js></script>
+
+<script>
+   var canvas;
+
+   // time AND this.cursor VARIABLES exist
+
+   var matrix = new Matrix();
+
+   var Ax = 0, Bx = 0, Cx = 0, Dx = 0;
+   var Ay = 0, By = 0, Cy = 0, Dy = 0;
+
+   matrix.identity();
+   matrix.translate(1, 0, 0);
+   matrix.translate(2, 3, 0);
+
+
+   //console.log(matrix.toString());
+
+   var srcVec = new Vector3(10, 0, 0);
+   var dstVec = new Vector3(0, 0, 0);
+   matrix.transform(srcVec, dstVec);
+
+   //console.log(dstVec.toString());
+   
+   /////////////////////////////////////////////////////////////////////
+
+
+   canvas = initCanvas('canvas1');
+   canvas.update = function(g) {
+
+      // YOU ARE GOING TO REPLACE THE CODE BELOW.
+
+      var x = this.cursor.x,
+          y = this.cursor.y;
+          //Normalize x and y for use with matrix etc
+          normalX = x/600 - 0.5;
+          normalY = y/400 - 0.5;
+
+      g.strokeStyle = 'black';
+      g.strokeRect(1, 1, this.width-2, this.height-2);
+
+      var matrix = new Matrix();
+      matrix.identity();
+
+      // var xCurve = hermiteCurve(-1,1,0,0);
+      // var yCurve = hermiteCurve(-1,1,0,0);
+
+      // g.beginPath();
+      // for (var i in xCurve) {
+      //    var mp = new Vector3(0,0,0);
+      //    var px = new Vector3(0,0,0);
+      //    mp.x = xCurve[i];
+      //    mp.y = yCurve[i];
+      //    getPoint(matrix,mp,px);
+      //    if (i == 0) {
+      //       console.log(i);
+      //       g.moveTo(px.x,px.y);
+      //    } else {
+      //       g.lineTo(px.x,px.y);
+      //    }
+      // }
+      // g.stroke;
+      //drawCurve(g);
+
+      //matrix.translate(Math.sin(time)/2,0,0);
+
+      // Rotate matrix 
+      //matrix.rotateX(Math.cos(time));
+      //matrix.rotateY(Math.tan(time));
+
+      //console.log((Math.sin(time)+1)/2);
+
+      var bxCurve = bezierCurve(-0.5,0.5,1,0);
+      var byCurve = bezierCurve(-0.5,0.5,0,0);
+
+      var hxCurve = hermiteCurve(-0.5,0.5,1,0);
+      var hyCurve = hermiteCurve(-0.5,0.5,0,0);
+
+      //Translate using bezier curve
+      var mp = new Vector3(0,0,0);
+      var px = new Vector3(0,0,0);
+      console.log(Math.floor(time%100));
+      mp.x = bxCurve[Math.floor(time*50%100)];
+      mp.y = byCurve[Math.floor(time*50%100)];
+      getPoint(matrix,mp,px);
+
+      matrix.translate(mp.x,mp.y,0);
+
+      //Scale using hermite curve
+      var mp = new Vector3(0,0,0);
+      var px = new Vector3(0,0,0);
+      console.log(Math.floor(time%100));
+      mp.x = hxCurve[Math.floor(time*50%100)];
+      mp.y = hyCurve[Math.floor(time*50%100)];
+      getPoint(matrix,mp,px);
+
+      matrix.scale(mp.x*2,1,0);
+
+      // var bl = new Vector3(-.3,-.3,0);
+      // var br = new Vector3(.3,-.3,0);
+      // var tl = new Vector3(-.3,.3,0);
+      // var tr = new Vector3(.3,.3,0);
+      // var tmp = new Vector3(0,0,0);
+
+      // var px0 = new Vector3(0,0,0);
+      // var px1 = new Vector3(0,0,0);
+      // var px2 = new Vector3(0,0,0);
+      // var px3 = new Vector3(0,0,0);
+
+      // getPoint(matrix,bl,px0);
+      // getPoint(matrix,br,px1);
+      // getPoint(matrix,tr,px2);
+      // getPoint(matrix,tl,px3);
+
+      // g.beginPath();
+      // g.moveTo(px0.x,px0.y);
+      // g.lineTo(px1.x,px1.y);
+      // g.lineTo(px2.x,px2.y);
+      // g.lineTo(px3.x,px3.y);
+      // g.lineTo(px0.x,px0.y);
+      // g.lineTo(px2.x,px2.y);
+      // g.moveTo(px1.x,px1.y);
+      // g.lineTo(px3.x,px3.y);
+      // g.stroke();
+
+      //Eyes
+      var el = new Vector3(-.07,.15,0);
+      var er = new Vector3(.07,.15,0);
+      var eyeL = new Vector3(0,0,0);
+      var eyeR = new Vector3(0,0,0);
+
+      getPoint(matrix,el,eyeL);
+      getPoint(matrix,er,eyeR);
+      var eyeMoveX = normalX*10, eyeMoveY = normalY*10;
+      
+      //Left eye
+      g.beginPath();
+      g.arc(eyeL.x,eyeL.y,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(eyeL.x+eyeMoveX,eyeL.y+eyeMoveY,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      //Right eye
+      g.beginPath();
+      g.arc(eyeR.x,eyeR.y,15,0,2*Math.PI);
+      g.stroke();
+      g.beginPath();
+      g.arc(eyeR.x+eyeMoveX,eyeR.y+eyeMoveY,9,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+
+      //Mouth
+      var mLTL = new Vector3(-0.09,0.03,0);
+      var mLTR = new Vector3(0,0.03,0);
+      var mLBL = new Vector3(-0.09,-0.03,0);
+      var mLBR = new Vector3(0,-0.03,0);
+
+      var mRTL = new Vector3(0,0.03,0);
+      var mRTR = new Vector3(0.09,0.03,0);
+      var mRBL = new Vector3(0,-0.03,0);
+      var mRBR = new Vector3(0.09,-0.03,0);
+
+      var leftMouthTL = new Vector3(0,0,0);
+      var leftMouthTR = new Vector3(0,0,0);
+      var leftMouthBL = new Vector3(0,0,0);
+      var leftMouthBR = new Vector3(0,0,0);
+
+      var rightMouthTL = new Vector3(0,0,0);
+      var rightMouthTR = new Vector3(0,0,0);
+      var rightMouthBL = new Vector3(0,0,0);
+      var rightMouthBR = new Vector3(0,0,0);
+
+      getPoint(matrix,mLTL,leftMouthTL);
+      getPoint(matrix,mLTR,leftMouthTR);
+      getPoint(matrix,mLBL,leftMouthBL);
+      getPoint(matrix,mLBR,leftMouthBR);
+      getPoint(matrix,mRTL,rightMouthTL);
+      getPoint(matrix,mRTR,rightMouthTR);
+      getPoint(matrix,mRBL,rightMouthBL);
+      getPoint(matrix,mRBR,rightMouthBR);
+
+      g.beginPath();
+      g.moveTo(leftMouthTL.x,leftMouthTL.y);
+      g.bezierCurveTo(leftMouthBL.x,leftMouthBL.y,leftMouthBR.x,leftMouthBR.y,
+                        leftMouthTR.x,leftMouthTR.y);
+      g.stroke();
+      g.beginPath();
+      g.moveTo(rightMouthTL.x,rightMouthTL.y);
+      g.bezierCurveTo(rightMouthBL.x,rightMouthBL.y,rightMouthBR.x,rightMouthBR.y,
+                        rightMouthTR.x,rightMouthTR.y);
+      g.stroke();
+
+      //Tongue
+      var tTL = new Vector3(-0.04,-0.015,0);
+      var tTR = new Vector3(0.04,-0.015,0);
+      var tBL = new Vector3(-0.04,-0.08,0);
+      var tBR = new Vector3(0.04,-0.08,0);
+
+      var tongueTL = new Vector3(0,0,0);
+      var tongueTR = new Vector3(0,0,0);
+      var tongueBL = new Vector3(0,0,0);
+      var tongueBR = new Vector3(0,0,0);   
+
+      getPoint(matrix,tTL,tongueTL);
+      getPoint(matrix,tTR,tongueTR);
+      getPoint(matrix,tBL,tongueBL);
+      getPoint(matrix,tBR,tongueBR);
+
+      g.beginPath();
+      g.moveTo(tongueTL.x,tongueTL.y);
+      g.bezierCurveTo(tongueBL.x,tongueBL.y,tongueBR.x,tongueBR.y,
+                        tongueTR.x,tongueTR.y);
+      g.fillStyle = "#FF99CC";
+      g.fill();  
+
+      //Left freckles
+      var lF1 = new Vector3(-0.07,0.03,0);
+      var lF2 = new Vector3(-0.02,0.03,0);
+      var lF3 = new Vector3(-0.045,0.01,0);
+
+      var leftFreckle1 = new Vector3(0,0,0);
+      var leftFreckle2 = new Vector3(0,0,0);
+      var leftFreckle3 = new Vector3(0,0,0);
+
+      getPoint(matrix,lF1,leftFreckle1);
+      getPoint(matrix,lF2,leftFreckle2);
+      getPoint(matrix,lF3,leftFreckle3);
+
+      g.beginPath();
+      g.arc(leftFreckle1.x,leftFreckle1.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(leftFreckle2.x,leftFreckle2.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();        
+      g.beginPath();
+      g.arc(leftFreckle3.x,leftFreckle3.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();    
+
+      //Right freckles
+      var rF1 = new Vector3(0.07,0.03,0);
+      var rF2 = new Vector3(0.02,0.03,0);
+      var rF3 = new Vector3(0.045,0.01,0);
+
+      var rightFreckle1 = new Vector3(0,0,0);
+      var rightFreckle2 = new Vector3(0,0,0);
+      var rightFreckle3 = new Vector3(0,0,0);
+
+      getPoint(matrix,rF1,rightFreckle1);
+      getPoint(matrix,rF2,rightFreckle2);
+      getPoint(matrix,rF3,rightFreckle3);
+
+      g.beginPath();
+      g.arc(rightFreckle1.x,rightFreckle1.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();
+      g.beginPath();
+      g.arc(rightFreckle2.x,rightFreckle2.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();        
+      g.beginPath();
+      g.arc(rightFreckle3.x,rightFreckle3.y,1,0,2*Math.PI);
+      g.fillStyle = "black";
+      g.fill();  
+
+      //Left ear
+      var lET = new Vector3(-.15,.2,0);
+      var lEL = new Vector3(-.4,.15,0);
+      var lEB = new Vector3(-.2 + (Math.sin(time*4))/20,-.3,0);
+
+      var leftEarT = new Vector3(0,0,0);
+      var leftEarL = new Vector3(0,0,0);
+      var leftEarB = new Vector3(0,0,0);
+
+      getPoint(matrix,lET,leftEarT);
+      getPoint(matrix,lEL,leftEarL);
+      getPoint(matrix,lEB,leftEarB);
+
+      g.beginPath();
+      g.moveTo(leftEarT.x,leftEarT.y);
+      g.quadraticCurveTo(leftEarL.x,leftEarL.y,leftEarB.x,leftEarB.y);
+      g.fillStyle = "#B27300";
+      g.fill();
+
+      //Right ear
+      var rET = new Vector3(.15,.2,0);
+      var rER = new Vector3(.4,.15,0);
+      var rEB = new Vector3(.2 + (Math.cos(time*4))/20,-.3,0);
+
+      var rightEarT = new Vector3(0,0,0);
+      var rightEarR = new Vector3(0,0,0);
+      var rightEarB = new Vector3(0,0,0);
+
+      getPoint(matrix,rET,rightEarT);
+      getPoint(matrix,rER,rightEarR);
+      getPoint(matrix,rEB,rightEarB);
+
+      g.beginPath();
+      g.moveTo(rightEarT.x,rightEarT.y);
+      g.quadraticCurveTo(rightEarR.x,rightEarR.y,rightEarB.x,rightEarB.y);
+      g.fillStyle = "#B27300";
+      g.fill();
+      
+   }
+
+   //Draw either hermite or bezier depending on internal method call
+   drawCurve = function(g) {
+      var matrix = new Matrix();
+      matrix.identity();
+
+      var xCurve = bezierCurve(-0.5,0.5,1,0);
+      var yCurve = bezierCurve(-0.5,0.5,0,0);
+
+      // g.beginPath();
+      // var start = new Vector3(0,0,0);
+      // var matStart = new Vector3(0,0,0);
+      // matStart.x = xCurve[0];
+      // matStart.y = yCurve[0];
+      // getPoint(matrix,matStart,start)
+      // g.moveTo(start.x,start.y,0);
+      // g.lineTo(0,0,0);
+      // g.stroke();
+      for (var i in xCurve) {
+         var mp = new Vector3(0,0,0);
+         var px = new Vector3(0,0,0);
+         mp.x = xCurve[i];
+         mp.y = yCurve[i];
+         getPoint(matrix,mp,px);
+               
+         console.log(px.x,px.y);
+         g.beginPath();
+         g.moveTo(px.x-5,px.y-5,0);
+         g.lineTo(px.x,px.y,0);
+         g.stroke();
+
+      }
+      // g.stroke;
+   }
+
+   //A is start position, B is end position, C is start rate, D is end rate
+   hermiteCurve = function(A,B,C,D) {
+      var hmatrix = [[ 2,-2, 1, 1], 
+                     [-3, 3,-2,-1], 
+                     [ 0, 0, 1, 0], 
+                     [ 1, 0, 0, 0]];
+      //Multiply ABCD vector with matrix to find coefficients for cubic
+      var input = [A,B,C,D];
+      var coefficients = vecMultiply(hmatrix,input);
+
+      var curve = [];
+      for (var t = 0; t <=1; t += 0.01){
+         curve.push(cubic(coefficients,t));
+      }
+      return curve;
+   }
+
+   //A is start position, B is end position, C is start rate, D is end rate
+   bezierCurve = function(A,B,C,D) {
+      var bmatrix = [[-1, 3,-3, 1], 
+                     [ 3,-6, 3, 0], 
+                     [-3, 3, 0, 0], 
+                     [ 1, 0, 0, 0]];
+      //Multiply ABCD vector with matrix to find coefficients for cubic
+      var input = [A,B,C,D];
+      var coefficients = vecMultiply(bmatrix,input);
+
+      var curve = [];
+      for (var t = 0; t <=1; t += 0.01){
+         curve.push(cubic(coefficients,t));
+      }
+      return curve;
+   }
+
+   cubic = function(coefficients, t) {
+      return (coefficients[0] * Math.pow(t,3) + coefficients[1] * Math.pow(t,2) + 
+               coefficients[2] * t + coefficients[3]);
+   }
+
+   vecMultiply = function(matrix, vector) {
+      var result = [];
+      result[0] = matrix[0][0]*vector[0] + matrix[0][1]*vector[1] + 
+                  matrix[0][2]*vector[2] + matrix[0][3]*vector[3];
+      result[1] = matrix[1][0]*vector[0] + matrix[1][1]*vector[1] + 
+                  matrix[1][2]*vector[2] + matrix[1][3]*vector[3];
+      result[2] = matrix[2][0]*vector[0] + matrix[2][1]*vector[1] + 
+                  matrix[2][2]*vector[2] + matrix[2][3]*vector[3];
+      result[3] = matrix[3][0]*vector[0] + matrix[3][1]*vector[1] + 
+                  matrix[3][2]*vector[2] + matrix[3][3]*vector[3];
+      return result;
+   }
+
+   getPoint = function(matrix,mPoint, dst) {
+      var tmp = new Vector3(0,0,0);
+      matrix.transform(mPoint,tmp);
+      tmp.viewportTransform(canvas.width,canvas.height,dst);
+   }
+</script>

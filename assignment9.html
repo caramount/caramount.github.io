@@ -109,21 +109,17 @@ Here is a simple square which is animated using hermite and bezier curves:
 
       //Translate using bezier curve
       var mp = new Vector3(0,0,0);
-      var px = new Vector3(0,0,0);
       console.log(Math.floor(time%100));
       mp.x = bxCurve[Math.floor(time*50%100)];
       mp.y = byCurve[Math.floor(time*50%100)];
-      getPoint(matrix,mp,px);
 
       matrix.translate(mp.x,mp.y,0);
 
       //Scale using hermite curve
       var mp = new Vector3(0,0,0);
-      var px = new Vector3(0,0,0);
       console.log(Math.floor(time%100));
       mp.x = hxCurve[Math.floor(time*50%100)];
       mp.y = hyCurve[Math.floor(time*50%100)];
-      getPoint(matrix,mp,px);
 
       matrix.scale(mp.x*2,1,0);
 

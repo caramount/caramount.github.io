@@ -1,0 +1,80 @@
+<script src=CT_Modeler.js></script>
+
+<body bgcolor=white>
+<center>
+<canvas id='canvas1' width='680' height='480'></canvas>
+<p><i>"Hey Jerry, why do they call them seagulls?"</i></p>
+<p><i>"Because, you dope, if they lived by the bay they'd be baygulls"</i></p>
+</center>
+</body>
+
+<script>
+   function getTime() { return (new Date()).getTime() / 1000; }
+
+   document.getElementById('canvas1').style.border = "thick solid #000";
+
+   var scene = new CT.Scene(canvas1);
+   scene.setLight(0, [ 1, 1, 1]);
+   scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
+
+   var root = new CT.Node();
+   scene.add(root);
+   var leftjoint = root.addChild(new CT.Node());
+   var rightjoint = root.addChild(new CT.Node());
+   var birdbody = root.addChild(new CT.Sphere(50,50));
+   birdbody.scale([.5,.5,2]);
+   var birdbeak = root.addChild(new CT.Cube());
+   birdbeak.scale([.15,.15,.5]).translate(0,0,3).rotateX(.8);
+   var birdEyes=[]; 
+   birdEyes[0] = root.addChild(new CT.Sphere());
+   birdEyes[0].scale([.07,.07,.07]).translate(0,5,20);
+   birdEyes[0].setPhong([0,0,0, 0,0,0, 1,1,1,10]);
+   birdEyes[0].translate(3,0,0);
+   birdEyes[1] = root.addChild(new CT.Sphere());
+   birdEyes[1].scale([.07,.07,.07]).translate(0,5,20);
+   birdEyes[1].setPhong([0,0,0, 0,0,0, 1,1,1,10]);
+   birdEyes[1].translate(-3,0,0);
+
+
+   var rightwing1 = rightjoint.addChild(new CT.Cylinder());
+   rightwing1.identity().translate(1.3,0,0).scale([1,.3,1]);
+   rightwing1.setMetal(0,0,1);
+   var rightwingjoint = rightjoint.addChild(new CT.Node());
+   var rightwing2 = rightwingjoint.addChild(new CT.Cylinder());
+   //rightwing2.setMetal(0,1,0);
+
+
+   var leftwing1 = leftjoint.addChild(new CT.Cylinder());
+   leftwing1.translate(-1.3,0,0).scale([1,.3,1]);
+   leftwing1.setMetal(0,0,1);
+   var leftwingjoint = leftjoint.addChild(new CT.Node());
+   var leftwing2 = leftwingjoint.addChild(new CT.Cylinder()); 
+   //leftwing2.setMetal(6,6,6);
+  
+
+   var startTime = getTime();
+   (function update() {
+      CT.time = getTime() - startTime;
+/*
+      root.identity().rotateY(CT.time).scale(.3);
+*/
+      root.identity().scale(.25).rotateY(CT.time/3);
+      rightjoint.identity().rotateZ(Math.sin(CT.time*2)/2);
+      leftjoint.identity().rotateZ(-Math.sin(CT.time*2)/2);
+
+      //var wingRotate = Math.max(Math.sin(CT.time),0);
+      var wingRotate = Math.abs(Math.sin(CT.time));
+      rightwingjoint.identity().translate(2.5,0,0).rotateZ(wingRotate-1);
+      leftwingjoint.identity().translate(-2.5,0,0).rotateZ(-wingRotate+1);
+
+      rightwing2.identity().translate(.7,0,0).scale([1,.2,.75]);
+      rightwing2.setPhong([0,0,0, 1,1,1, 1,1,1,10]);
+
+      leftwing2.identity().translate(-.7,0,0).scale([1,.2,.75]);
+      leftwing2.setPhong([0,0,0, 1,1,1, 1,1,1,10]);
+
+      root.draw();
+
+      setTimeout(update, 1000 / 60);
+   })();
+</script>
